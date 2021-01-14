@@ -31,16 +31,10 @@ test_data = Data(dataset)
 with open("Datasets/{}.pickle".format(dataset), 'rb') as handle:
     data = pickle.load(handle)
 
-# d = data.shape[0]
-# N = data.shape[1]
-# M = np.mean(data, axis=1).reshape(d, 1)     #feature-wise mean
-# M_matrix = np.tile(M, (1, N))
-# print(M_matrix.shape)
 # load EVD output
 with open("Datasets/EV_{}.pickle".format(dataset), 'rb') as f:
     X1 = pickle.load(f)
 X_gt = X1[:, 0:K]
-# print(X_gt)
 
 X_init = np.random.rand(data.shape[0], K)
 X_init, r = np.linalg.qr(X_init)
