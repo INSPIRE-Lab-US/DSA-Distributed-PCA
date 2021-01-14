@@ -26,7 +26,6 @@ flag = 0                # flag = 0: constant step size, flag = 1: 1/t^0.2, flag 
 graphW = GraphType(gtype, num_nodes, p)
 W = graphW.createGraph()
 WW = np.kron(W, np.identity(K))
-# print(W)
 
 # Monte Carlo simulations
 MonteCarlo = 10

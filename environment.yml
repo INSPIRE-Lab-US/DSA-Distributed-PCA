@@ -1,9 +1,10 @@
-name: base
+name: Distributed_PCA
 channels:
   - defaults
 dependencies:
-  - conda
   - python=3.8
-  - python.app
-  - pip
-  - jupyterlab
+  - numpy=1.19.2
+  - matplotlib=3.3.2
+  - networkx=2.5
+
+

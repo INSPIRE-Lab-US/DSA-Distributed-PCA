@@ -7,13 +7,10 @@ class Algorithms():
 
         self.data = data  # data samples
         self.num_itr = iterations  # Number of iterations
-        # self.alpha = step_size
         self.K = K  # dimension of eigenspace to be estimated
-        # self.topology = graphType  # Network topology
         self.n = num_nodes  # Number of nodes n
         self.X_init = initial_est  # initial estimate of K-dimensional eigenspace (dxK)
         self.X_gt = ground_truth  # true K-dimensional eigenspace (dxK)
-        # self.node_i = node_i  # Node index in the network
 
     def OI(self):
         N = self.data.shape[1]
@@ -44,14 +41,12 @@ class Algorithms():
         return angle_sanger
 
     def sanger_centralized_update(self, C, X):
-        k = X.shape[1]
         T = np.dot(np.dot(X.transpose(), C), X)
         T = np.triu(T)
         g = -np.dot(C, X) + np.dot(X, T)
         return g
 
     def DSA(self, WW, alpha, step_flag):
-        X_dsa = np.tile(self.X_init.transpose(), (self.n, 1))
         angle_dsa = self.dist_subspace(self.X_gt, self.X_init)
         N = self.data.shape[1]
         Cy_cell = np.zeros((self.n,), dtype=np.object)
@@ -60,6 +55,7 @@ class Algorithms():
             Yi = self.data[:, i * s:(i + 1) * s]
             Cy_cell[i] = (1 / s) * np.dot(Yi, Yi.transpose())
         alpha0 = None
+        X_dsa = np.tile(self.X_init.transpose(), (self.n, 1))
         for itr in range(self.num_itr):
             if step_flag == 0:
                 alpha0 = alpha
@@ -67,7 +63,6 @@ class Algorithms():
                 alpha0 = alpha / (itr + 1)**0.2
             elif step_flag == 2:
                 alpha0 = alpha / math.sqrt(itr + 1)
-            # alpha = alpha0/(itr+1);
             X_dsa = np.dot(WW, X_dsa) - alpha0 * self.sanger_dist_update(Cy_cell, X_dsa)
             err = 0
             for i in range(self.n):
@@ -75,7 +70,6 @@ class Algorithms():
                 X2 = X1.transpose()
                 err = err + self.dist_subspace(self.X_gt, X2)
             angle_dsa = np.append(angle_dsa, err / self.n)
-            # angle_dsa2 = np.append(angle_dsa2, np.matlib.repmat(err / self.n, self.K, 1))
         return angle_dsa
 
 
@@ -125,7 +119,6 @@ class Algorithms():
                     err = err + self.dist_subspace(self.X_gt, X2)
                 angle_distpm = np.append(angle_distpm, err / self.n)
                 angle_distpm1 = np.append(angle_distpm1, np.tile(err / self.n, (Tc, 1)))
-            # X_est = X_distpm
         return angle_distpm1
 
     def distProjGD(self, WW, alpha, step_flag):
@@ -149,22 +142,17 @@ class Algorithms():
             V_dpgd = np.dot(WW, X_dpgd)
             for i in range(self.n):
                 Ci = Cy_cell[i]
-                # V1_dpgd = V_dpgd[i * self.K:(i + 1) * self.K, :].transpose() - \
-                #           alpha0*self.gradientRecError(Yi, V_dpgd[i * self.K:(i + 1) * self.K, :].transpose())
                 V1_dpgd = V_dpgd[i * self.K:(i + 1) * self.K, :].transpose() + \
                           alpha0 * np.matmul(Ci, X_dpgd[i * self.K:(i + 1) * self.K, :].transpose())
-                # print(V1_dpgd.shape)
                 V1_dpgd, r = np.linalg.qr(V1_dpgd)  # projection step
                 X_dpgd[i * self.K:(i + 1) * self.K, :] = V1_dpgd.transpose()
                 err = err + self.dist_subspace(self.X_gt, V1_dpgd)
             angle_dpgd = np.append(angle_dpgd, err / self.n)
-            # angle_dsa2 = np.append(angle_dsa2, np.matlib.repmat(err / self.n, self.K, 1))
         return angle_dpgd
 
 
     def dist_subspace(self, X, Y):
         X = X/np.linalg.norm(X, axis=0)
-        # print(np.linalg.norm(Y, axis=0))
         Y = Y/np.linalg.norm(Y, axis=0)
         M = np.matmul(X.transpose(), Y)
         sine_angle = 1 - np.diag(M)**2
