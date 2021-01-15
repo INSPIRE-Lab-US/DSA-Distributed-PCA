@@ -10,8 +10,8 @@ import pickle
 # initialize variables
 iterations = 10000
 N = 10000       # number of data samples
-d = 200          # dimension of data samples
-K = 20           # number of eigenvectors to be estimated
+d = 20          # dimension of data samples
+K = 2           # number of eigenvectors to be estimated
 eigengap = 0.8  # eigen gap between K+1 and Kth eigenvalue
 
 gtype = 'erdos-renyi'   # type of graph: erdos-renyi, cycle, star
@@ -37,9 +37,11 @@ angle_dpgd = np.zeros((MonteCarlo,), dtype=np.object)
 dataset = 'synthetic'
 for m in range(MonteCarlo):
     # generate synthetic data
-    test_data = Data(dataset)
-    data = test_data.generateSynthetic(d, N, eigengap, K)
-    X_gt = test_data.computeTrueEV(data, K)
+    test_data = Data(d, N, eigengap, K)
+
+    np.random.seed(10+m)
+    data = test_data.generateSynthetic()
+    X_gt = test_data.computeTrueEV(data)
 
 
     # initial estimate

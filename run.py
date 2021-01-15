@@ -26,16 +26,15 @@ WW = np.kron(W, np.identity(K))
 # import data set
 dataset = 'cifar10'
 test_data = Data(dataset)
-# data = test_data.load_CIFAR10()
-
-with open("Datasets/{}.pickle".format(dataset), 'rb') as handle:
+with open("Datasets/pickled/{}.pickle".format(dataset), 'rb') as handle:
     data = pickle.load(handle)
 
 # load EVD output
-with open("Datasets/EV_{}.pickle".format(dataset), 'rb') as f:
+with open("Datasets/true_eigenvectors/EV_{}.pickle".format(dataset), 'rb') as f:
     X1 = pickle.load(f)
 X_gt = X1[:, 0:K]
 
+np.random.seed(1)
 X_init = np.random.rand(data.shape[0], K)
 X_init, r = np.linalg.qr(X_init)
 
