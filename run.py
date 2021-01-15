@@ -25,7 +25,6 @@ WW = np.kron(W, np.identity(K))
 
 # import data set
 dataset = 'cifar10'
-test_data = Data(dataset)
 with open("Datasets/pickled/{}.pickle".format(dataset), 'rb') as handle:
     data = pickle.load(handle)
 
