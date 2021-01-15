@@ -18,3 +18,4 @@ Similar to the results in the paper, the codes are provided to generate results 
 1.  Synthetic data -- Synthetic data of certain dimension and eigengap is generated and results are obtained for all the 5 methods mentioned above. 
 2. Real world data -- MNIST and CIFAR10 datasets were used in our experiments. The MNIST data is available from this [website](http://yann.lecun.com/exdb/mnist/), while cifar10 data is available [here](https://www.cs.toronto.edu/~kriz/cifar.html). Both these datasets were download, read into numpy arrays and then pickled for use in the experiments. The pickled arrays are available in `./Datasets/pickled`. The eigenvalue decomposition for the covariance matrices of both the datasets is also available in `./Datasets/true_eigenvectors` and can be readily loaded for measuring the performance accuracy of the algorithms. If `K` eigenvectors are being estimated, just use first `K` columns from the loaded EVs. 
 
+=======
