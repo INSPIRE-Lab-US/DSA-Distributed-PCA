@@ -1,8 +1,6 @@
 import numpy as np
 from Algorithms import Algorithms
 from GraphTopology import GraphType
-from Data import Data
-
 import pickle
 
 
