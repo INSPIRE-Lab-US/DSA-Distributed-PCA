@@ -26,6 +26,7 @@ class Data():
         N = data.shape[1]
         Cy = (1 / N) * np.dot(data, data.transpose())
         eigval_y, evd_y = np.linalg.eigh(Cy)
+        eigval_y = np.flip(eigval_y)
         evd_y = np.fliplr(evd_y)
         X_gt = evd_y[:, 0:self.K]
         return X_gt

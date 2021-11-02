@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 
-class Algorithms():
+class Algorithms:
     def __init__(self, data, iterations, K, num_nodes, initial_est, ground_truth):
 
         self.data = data  # data samples

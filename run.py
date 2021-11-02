@@ -2,19 +2,30 @@ import numpy as np
 from Algorithms import Algorithms
 from GraphTopology import GraphType
 import pickle
+import argparse
+import read_dataset
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-K", "--K", help="number of eigenvectors to be estimated, default number is 5", type = int, default=5)
+parser.add_argument("-n", "--num_nodes", help="number of nodes in the network, default number is 10", type = int, default=10)
+parser.add_argument("-s", "--stepsize", help="step size (or learning rate) for DSA and centralized GHA algorithms, default value is 0.1", type = float, default=0.1)
+parser.add_argument("-ds", "--dataset", help="dataset used for the experiment, default is MNIST",
+                   choices=['mnist', 'cifar10'], type = str, default="mnist")
+args = parser.parse_args()
 
 # initialize variables
 iterations = 10000
-K = 20           # number of eigenvectors to be estimated
 
-gtype = 'erdos-renyi'   # type of graph: erdos-renyi, cycle, star
-num_nodes = 20          # number of nodes
+K = args.K              # number of eigenvectors to be estimated
+
+gtype = 'erdos-renyi'
 p = 0.5                 # connectivity for erdos renyi graph
-step_size = 0.7        # initial step size for DSA
-step_sizeg = 0.8        # initial step size for GHA
-step_sizep = 1        # initial step size for PGD
-flag = 0                # flag = 0: constant step size, flag = 1: 1/t^0.2, flag = 2: 1/sqrt(t)
+
+num_nodes = args.num_nodes           # number of nodes
+step_size = args.stepsize            # initial step size for DSA
+step_sizeg = args.stepsize           # initial step size for GHA
+step_sizep = 1                       # initial step size for PGD
+flag = 0                             # flag = 0: constant step size, flag = 1: 1/t^0.2, flag = 2: 1/sqrt(t)
 
 # generate graph
 graphW = GraphType(gtype, num_nodes, p)
@@ -22,9 +33,8 @@ W = graphW.createGraph()
 WW = np.kron(W, np.identity(K))
 
 # import data set
-dataset = 'cifar10'
-with open("Datasets/pickled/{}.pickle".format(dataset), 'rb') as handle:
-    data = pickle.load(handle)
+dataset = args.dataset
+data = read_dataset.read_data(dataset)
 
 # load EVD output
 with open("Datasets/true_eigenvectors/EV_{}.pickle".format(dataset), 'rb') as f:

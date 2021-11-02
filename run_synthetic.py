@@ -3,22 +3,36 @@ from Algorithms import Algorithms
 from GraphTopology import GraphType
 from Data import Data
 import pickle
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-m", "--monte_trial", help="A number to indicate how many Monte Carlo trials to run, default value is 10", type=int, default=10)
+parser.add_argument("-d","--dimension", help="Dimension of the data samples, default value is 20", type=int, default=20)
+parser.add_argument("-K", "--K", help="number of eigenvectors to be estimated, default number is 5", type = int, default=5)
+parser.add_argument("-EG","--eigengap", help="eigengap between Kth and (K+1)th eigenvalues", type = float, default=0.6)
+parser.add_argument("-gt","--graphtype", help="graph topology, default topology is erdos-renyi", choices=['erdos-renyi', 'star', 'cycle'], type = str, default='erdos-renyi')
+parser.add_argument("-n", "--num_nodes", help="number of nodes in the network, default number is 10", type = int, default=10)
+parser.add_argument("-s", "--stepsize", help="step size (or learning rate) for DSA and centralized GHA algorithms, default value is 0.1", type = float, default=0.1)
 
 
+
+args = parser.parse_args()
 # initialize variables
 iterations = 10000
 N = 10000       # number of data samples
-d = 20          # dimension of data samples
-K = 2           # number of eigenvectors to be estimated
-eigengap = 0.8  # eigen gap between K+1 and Kth eigenvalue
 
-gtype = 'erdos-renyi'   # type of graph: erdos-renyi, cycle, star
-num_nodes = 10          # number of nodes
+d = args.dimension          # dimension of data samples
+K = args.K                  # number of eigenvectors to be estimated
+eigengap = args.eigengap     # eigen gap between K+1 and Kth eigenvalue
+
+gtype = args.graphtype   # type of graph: erdos-renyi, cycle, star
 p = 0.5                 # connectivity for erdos renyi graph
-step_size = 0.5        # initial step size for DSA
-step_sizeg = 0.5        # initial step-size for GHA
-step_sizep = 0.5       # initial step size for PGD
-flag = 0                # flag = 0: constant step size, flag = 1: 1/t^0.2, flag = 2: 1/sqrt(t)
+
+num_nodes = args.num_nodes      # number of nodes
+step_size = args.stepsize       # initial step size for DSA
+step_sizeg = args.stepsize      # initial step-size for GHA
+step_sizep = 0.1                # initial step size for PGD
+flag = 0                        # flag = 0: constant step size, flag = 1: 1/t^0.2, flag = 2: 1/sqrt(t)
 
 # generate graph
 graphW = GraphType(gtype, num_nodes, p)
@@ -26,7 +40,7 @@ W = graphW.createGraph()
 WW = np.kron(W, np.identity(K))
 
 # Monte Carlo simulations
-MonteCarlo = 10
+MonteCarlo = args.monte_trial
 angle_oi = np.zeros((MonteCarlo,), dtype=np.object)
 angle_sanger = np.zeros((MonteCarlo,), dtype=np.object)
 angle_dsa = np.zeros((MonteCarlo,), dtype=np.object)
@@ -40,8 +54,7 @@ for m in range(MonteCarlo):
     np.random.seed(10+m)
     data = test_data.generateSynthetic()
     X_gt = test_data.computeTrueEV(data)
-
-
+    print(X_gt.shape)
     # initial estimate
     X_init = np.random.rand(data.shape[0], K)
     X_init, r = np.linalg.qr(X_init)
