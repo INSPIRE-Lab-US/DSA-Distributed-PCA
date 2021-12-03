@@ -11,8 +11,8 @@ class Data():
         A = np.random.rand(self.d, self.d)
         U, Sigma, V = np.linalg.svd(A)
 
-        a = np.linspace(1, 0.8, self.K)
-        b = np.linspace(0.8 * self.eigen_gap, 0.1, self.d - self.K)
+        a = np.sqrt(np.linspace(1, 0.8, self.K))
+        b = np.sqrt(np.linspace(0.8 * self.eigen_gap, 0.1, self.d - self.K))
         c = np.concatenate((a, b), axis=0)
 
         A_hat = U @ np.diag(c) * V.T
