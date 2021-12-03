@@ -8,17 +8,20 @@ class Data():
         self.K = K          # no. of eigenvectors to be estimated
 
     def generateSynthetic(self):
+        A = np.random.rand(self.d, self.d)
+        U, Sigma, V = np.linalg.svd(A)
+
         a = np.linspace(1, 0.8, self.K)
         b = np.linspace(0.8 * self.eigen_gap, 0.1, self.d - self.K)
         c = np.concatenate((a, b), axis=0)
-        Cov = np.diag(c)
-        A = np.linalg.cholesky(Cov)
-        # A = np.random.randn(d, d)
+
+        A_hat = U @ np.diag(c) * V.T
+
 
         # Z is a matrix of N standard normal vectors, size Nxd
         Z = np.random.multivariate_normal(np.zeros(self.d), np.identity(self.d), self.N)
         Z = Z.transpose()  # size dxN
-        data = np.matmul(A, Z)
+        data = np.matmul(A_hat, Z)
         return data
 
 
